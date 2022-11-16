@@ -54,6 +54,7 @@ def index():
 @app.route('/<int:post_id>')
 def post(post_id):
     post = dict(get_post(post_id))
+    post['created'] = format_date(post['created'])
     return render_template('post.html', post=post)
 
 
@@ -103,9 +104,11 @@ def edit(id):
 @app.route('/<int:id>/delete', methods=('POST',))
 def delete(id):
     post = get_post(id)
+    print(post)
     conn = get_db_connection()
-    conn.execute('DELETE FROM posts')
+    conn.execute(f'DELETE FROM posts WHERE id = {id}')
     conn.commit()
     conn.close()
     flash('"{}" was successfully deleted!'.format(post['title']))
     return redirect(url_for('index'))
+
