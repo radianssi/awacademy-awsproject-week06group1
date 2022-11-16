@@ -106,9 +106,8 @@ def delete(id):
     post = get_post(id)
     print(post)
     conn = get_db_connection()
-    conn.execute(f'DELETE FROM posts WHERE id = {id}')
+    conn.execute('DELETE FROM posts WHERE id = ?', (id,))
     conn.commit()
     conn.close()
     flash('"{}" was successfully deleted!'.format(post['title']))
     return redirect(url_for('index'))
-
