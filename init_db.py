@@ -1,8 +1,31 @@
 import psycopg2
-from config import config
+import boto3
+import logging
+from botocore.exceptions import ClientError
+import json
+
+logger = logging.getLogger(__name__)
+
+def get_secret_value(name):   
+        client = boto3.client("secretsmanager")
+
+        try:
+            kwargs = {'SecretId': name}
+            response = client.get_secret_value(**kwargs)
+            logger.info("Got value for secret %s.", name)
+        except ClientError:
+            logger.exception("Couldn't get value for secret %s.", name)
+            raise
+        else:
+            return json.loads(response['SecretString'])
+
+def get_db_connection():
+    data = get_secret_value("w6pg1_rds-test11")
+    conn = psycopg2.connect("host=%s dbname=%s port=%s user=%s password=%s" % (data['host'], data['dbname'], data['port'], data['username'], data['password']))
+    return conn
 
 def do_init():
-    connection = psycopg2.connect(**config())
+    connection = get_db_connection()
     cur = connection.cursor()
     #connection = sqlite3.connect('database.db')
 
