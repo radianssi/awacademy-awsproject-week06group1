@@ -1,13 +1,31 @@
-import sqlite3
 from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
 from datetime import datetime
 from init_db import do_init
+import boto3
+import logging
+from botocore.exceptions import ClientError
+import json
+import psycopg2
 
+logger = logging.getLogger(__name__)
+
+def get_secret_value(name):   
+        client = boto3.client("secretsmanager")
+
+        try:
+            kwargs = {'SecretId': name}
+            response = client.get_secret_value(**kwargs)
+            logger.info("Got value for secret %s.", name)
+        except ClientError:
+            logger.exception("Couldn't get value for secret %s.", name)
+            raise
+        else:
+            return json.loads(response['SecretString'])
 
 def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
+    data = get_secret_value("w6pg1_rds")
+    conn = psycopg2.connect("host=%s database=%s port=%s user=%s password=%s" % (data['host'], data['dbname'], data['port'], data['username'], data['password']))
     return conn
 
 #
