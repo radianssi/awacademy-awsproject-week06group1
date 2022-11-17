@@ -57,11 +57,8 @@ def create_rds():
 
                 print ('DB instance ready with host: %s' % host)
                 running = False
-        endpoint = db_instance['Endpoint']
-        print(endpoint)
-        #print(host)
-        host = endpoint['Address']
-        print(host)
+        #endpoint = db_instance['Endpoint']
+        #host = endpoint['Address']
         return host
 
 def create_secret(username, password, host):
