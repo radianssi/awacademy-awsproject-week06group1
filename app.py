@@ -24,8 +24,8 @@ def get_secret_value(name):
             return json.loads(response['SecretString'])
 
 def get_db_connection():
-    data = get_secret_value("w6pg1_rds")
-    conn = psycopg2.connect("host=%s database=%s port=%s user=%s password=%s" % (data['host'], data['dbname'], data['port'], data['username'], data['password']))
+    data = get_secret_value("w6pg1_rds-secret")
+    conn = psycopg2.connect("host=%s dbname=%s port=%s user=%s password=%s" % (data['host'], data['dbname'], data['port'], data['username'], data['password']))
     return conn
 
 
