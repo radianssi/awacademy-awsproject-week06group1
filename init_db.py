@@ -1,20 +1,21 @@
-import sqlite3
-
+import psycopg2
+from config import config
 
 def do_init():
+    connection = psycopg2.connect(**config())
+    cur = connection.cursor()
+    #connection = sqlite3.connect('database.db')
 
-    connection = sqlite3.connect('database.db')
-
-    with open('schema.sql') as f:
-        connection.executescript(f.read())
+    #with open('schema.sql') as f:
+        #connection.executescript(f.read())
 
     cur = connection.cursor()
 
-    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+    cur.execute("INSERT INTO posts (title, content) VALUES (%s, %s)",
                 ('Jämähditkö? Tee kuten Heidi ja muuta urasi suuntaa', 'Jokaisen maanantain ei tarvitse olla nousukiitoa, mutta jos perjantaihin mennessä ei sorvin ääressä ole juuri ilon tai innostumisen kokemuksia irronnut, ollaan lähellä jämähtämistä. Oireet on helppo tunnistaa ja hoito on jokaisen ulottuvilla – uranvaihto ei katso taustaa eikä vaadi vuosien opiskelua.')
                 )
 
-    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+    cur.execute("INSERT INTO posts (title, content) VALUES (%s, %s)",
                 ('Tradenomista IT-ammattilaiseksi: Ilkan tarina', """Kansainvälisen kaupan tradenomiksi valmistunut ja useita vuosia työuraa LVI-alalla rakentanut Ilkka Jokela hyppäsi Academyn kiihdytyskaistalle saatuaan kipinän koodiin.
 
 “Olin jo päättänyt, että haluan koodata ja kouluttautua IT-alalle. Hain ja pääsinkin yliopistoon lukemaan tietotekniikkaa. Huomasin kuitenkin Academyn, joten en ottanut opiskelupaikkaa vastaan. Olen aina ollut kiinnostunut teknologiasta ja haluan tehdä jotain, mikä on tätä päivää”, Ilkka avaa omaa polkuaan.
@@ -26,11 +27,11 @@ Ilkka muistelee jännittäneensä Academyn intensiivistä prässiä enemmän kui
 “Parasta Academyssa oli ehdottomasti porukan yhteishenki sekä mahtavat opettajat. Käteen koulutuksesta jäi ennen kaikkea tieto siitä, että mitä vain voi oppia, kun on halu oppia.”""")
                 )
 
-    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+    cur.execute("INSERT INTO posts (title, content) VALUES (%s, %s)",
                 ('Tätä haluat kysyä AW Academysta ja uranvaihdosta', """Uudenlaisen koulutusmallin saapuminen Suomeen on herättänyt vuosien varrella keskustelua ja kirvoittanut kysymyksiä. Kokosimme tähän blogikirjoitukseen muutamia verkkokeskusteluissa (mm. Helsingin Sanomat, Taloussanomat) esiintyneitä kysymyksiä ja vastauksia.""")
                 )
 
-    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+    cur.execute("INSERT INTO posts (title, content) VALUES (%s, %s)",
                 ('Kaiken takana on koodi – ja sen voi oppia 12 viikossa', """Miten koodi pyörittää maailmaa? Ja miten sen oppiminen 12 viikon intensiivikoulutuksessa on mahdollista? IT-konsulttina ja -kouluttajana työskentelevä Tommi Teräsvirta kertoo.
 
 Tietokoneet ja niiden käyttämä kieli on muuttanut maailmaamme käsittämättömän paljon kohtuullisen pienessä ajassa. Jos kuka tahansa saisi kyydin aikakoneella 30 vuoden takaa nykypäivään, jäisi aikamatkustajan suu taatusti auki monessa arkisessa kohtaamisessa 2019-luvun alkuasukkaan kanssa.
@@ -42,3 +43,6 @@ Academyn 12 viikon ja vakituisen työpaikan Academic Workin asiakasyrityksen pal
 
     connection.commit()
     connection.close()
+
+if __name__ == "__main__":
+    do_init()
