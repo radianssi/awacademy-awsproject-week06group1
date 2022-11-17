@@ -84,13 +84,6 @@ def create_secret(username, password, host):
         return response
 
 def get_secret_value(name):
-        """
-        Gets the value of a secret.
-
-        :param stage: The stage of the secret to retrieve. If this is None, the
-                      current stage is retrieved.
-        :return: `SecretString` field as dictionary
-        """
         client = boto3.client("secretsmanager")
 
         try:
@@ -101,7 +94,6 @@ def get_secret_value(name):
             logger.exception("Couldn't get value for secret %s.", name)
             raise
         else:
-            #return response
             return json.loads(response['SecretString'])
 
 if __name__ == "__main__":
