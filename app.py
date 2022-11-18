@@ -1,17 +1,17 @@
 from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
 from datetime import datetime
-from init_db import do_init
 import boto3
 import logging
 from botocore.exceptions import ClientError
 import json
 import psycopg2
+import os
 
 logger = logging.getLogger(__name__)
 
 def get_secret_value(name):   
-        client = boto3.client("secretsmanager")
+        client = boto3.client("secretsmanager", region_name="ap-southeast-2")
 
         try:
             kwargs = {'SecretId': name}
@@ -137,3 +137,7 @@ def delete(id):
     flash('"{}" was successfully deleted!'.format(post['title']))
     return redirect(url_for('index'))
 
+
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
