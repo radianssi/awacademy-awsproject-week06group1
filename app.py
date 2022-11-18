@@ -10,8 +10,26 @@ import os
 
 logger = logging.getLogger(__name__)
 
+def get_region():
+    ec2_client = boto3.client('ec2')
+    # Retrieves all regions/endpoints that work with EC2
+    regions = ec2_client.describe_regions()
+
+    # Loop through each region
+    for region in regions['Regions']:
+        # Create an RDS client for the region
+        rds_client = boto3.client('rds', region_name=region['RegionName'])
+        # List RDS instances    
+        response = rds_client.describe_db_instances()
+        for db in response['DBInstances']:
+            if db['DBInstanceIdentifier'] == 'w6pg1-rds':
+                return db['AvailabilityZone']
+
+myregion = get_region()
+myregion = myregion[:-1]
+
 def get_secret_value(name):   
-        client = boto3.client("secretsmanager", region_name="ap-southeast-2")
+        client = boto3.client("secretsmanager", region_name=myregion)
 
         try:
             kwargs = {'SecretId': name}
