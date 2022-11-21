@@ -1,8 +1,6 @@
 *__pycache__
 venv/
 aws.py
-config.py
-hello.py
-init_db.py
+initialize.py
 README.md
-schema.sql
+.gitignore
