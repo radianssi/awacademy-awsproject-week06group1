@@ -31,3 +31,8 @@ venv/
 
 # Python cache
 *__pycache__
+
+# dababase
+database.db 
+database.ini
+

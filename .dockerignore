@@ -1,0 +1,6 @@
+*__pycache__
+venv/
+aws.py
+initialize.py
+README.md
+.gitignore
