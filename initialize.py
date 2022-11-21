@@ -3,7 +3,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("username", help="Give username", type=str)
-parser.add_argument("password", help="Give password", type=str)
+parser.add_argument("password", help="Give password (at least 8 characters)", type=str)
 parser.add_argument("region", help="Give AWS region i.e. eu-central-1", type=str)
 args = parser.parse_args()
 
