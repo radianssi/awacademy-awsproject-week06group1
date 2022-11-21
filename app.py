@@ -1,17 +1,50 @@
-import sqlite3
 from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
 from datetime import datetime
-from init_db import do_init
-from config import config
+import boto3
+import logging
+from botocore.exceptions import ClientError
+import json
 import psycopg2
+import os
 
+logger = logging.getLogger(__name__)
+
+def get_region():
+    ec2_client = boto3.client('ec2')
+    # Retrieves all regions/endpoints that work with EC2
+    regions = ec2_client.describe_regions()
+
+    # Loop through each region
+    for region in regions['Regions']:
+        # Create an RDS client for the region
+        rds_client = boto3.client('rds', region_name=region['RegionName'])
+        # List RDS instances    
+        response = rds_client.describe_db_instances()
+        for db in response['DBInstances']:
+            if db['DBInstanceIdentifier'] == 'w6pg1-rds':
+                return db['AvailabilityZone']
+
+myregion = get_region()
+myregion = myregion[:-1]
+
+def get_secret_value(name):   
+        client = boto3.client("secretsmanager", region_name=myregion)
+
+        try:
+            kwargs = {'SecretId': name}
+            response = client.get_secret_value(**kwargs)
+            logger.info("Got value for secret %s.", name)
+        except ClientError:
+            logger.exception("Couldn't get value for secret %s.", name)
+            raise
+        else:
+            return json.loads(response['SecretString'])
 
 def get_db_connection():
-    conn = psycopg2.connect(**config())
+    data = get_secret_value("w6pg1_rds-secret")
+    conn = psycopg2.connect("host=%s dbname=%s port=%s user=%s password=%s" % (data['host'], data['dbname'], data['port'], data['username'], data['password']))
     return conn
-
-
 
 
 def get_post(post_id):
@@ -123,7 +156,6 @@ def delete(id):
     return redirect(url_for('index'))
 
 
-import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
