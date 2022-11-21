@@ -7,8 +7,6 @@ import psycopg2
 
 logger = logging.getLogger(__name__)
 
-#myregion = "ap-southeast-2"
-
 def create_security_group_for_rds(myregion):
     ec2 = boto3.client('ec2', region_name=myregion)
 
@@ -80,12 +78,8 @@ def create_rds(username, password, sg_id, myregion):
             if status == 'available':
                 endpoint = db_instance['Endpoint']
                 host = endpoint['Address']
-                # port = endpoint['Port']
-
                 print ('DB instance ready with host: %s' % host)
                 running = False
-        #endpoint = db_instance['Endpoint']
-        #host = endpoint['Address']
         return host
 
 
@@ -194,15 +188,4 @@ def add_default_topics_to_db(myregion):
 
 
 if __name__ == "__main__":
-    #print(create_secret("simo", "Salasana2", "arn:2321"))
-    #data = get_secret_value("w6pg1_rds-test11")
-    # data = get_value("week5/group2/rds")
-    #print(data)
-    # data2 = json.loads(data['SecretString'])
-    # print(data2['username'])
-    #print(type(get_secret_value("w6pg1_rds-test11")))
-    #create_rds()
-    #create_security_group_for_rds("ap-south-1")
-    #create_rds("basso", "bassomarsu", "sg-00919eef68055e0b8", "ap-south-1")
-    create_posts_table()
     pass
