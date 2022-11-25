@@ -35,8 +35,6 @@ Go to AWS ECR and create private repository with name group1blog. View push comm
 After this open deployment.yaml and change "image" value from containers to your own ECR repository URI.
 
 ### Create EKS cluster for AWS
-Install kubectl and eksctl.
-
 To initiate EKS cluster use the command in CMD:
 ```bash
 ekctl create cluster --name cluster-name --node-type t2.micro --nodes 2
