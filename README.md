@@ -2,16 +2,25 @@
 Run your own blog with Flask in AWS EKS and AWS RDS (PostreSQL). Group project to learn how to utilize AWS resources.
 
 # Installation
+Required before install:
+* Python 3.10 or earlier (psycopg2 doesn't work with 3.11 atm)
+* AWS CLI (configured)
+* kubectl
+* ekctl
 
 ### Initialize resources to AWS
 Create virtual Python (3.10) enviroment, activate it and install depencies for initializiation. Run in CMD on project folder:
+```bash
 py -3.10 -m venv venv
 .\venv\Scripts\activate
 python -m pip install psycopg2
 python -m pip install boto3
+```
 
 Run initialize.py on command line with these parameters (password must be at least 8 characters long):
+```bash
 python initialize.py yourdesiredusername yourdesiredpassword yourdesideredawsregion
+```
 (i.e. python initialize.py sieni sipul1keiTTo eu-central-1)
 
 This will take ~2-3 minutes before everything is up and running.
@@ -28,8 +37,10 @@ After this open deployment.yaml and change "image" value from containers to your
 ### Create EKS cluster for AWS
 Install kubectl and eksctl.
 
-To initiate EKS cluster install kubectl and eksctl. 
-Use the command ekctl create cluster --name cluster-name --node-type t2.micro --nodes 2
+To initiate EKS cluster use the command in CMD:
+```bash
+ekctl create cluster --name cluster-name --node-type t2.micro --nodes 2
+```
 
 eksctl will automatically create the cluster with VPC, subnets, nodegroup, nodes and other required components for you.
 
@@ -37,10 +48,14 @@ There will be an IAM role attached to the node group. In order for the node grou
 
 ### Run deployment.yaml and service.yaml and get loab balancer's public address:
 Run these commands in CMD:
+```bash
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
+```
 
 After a while loab balancer will be online and you can find public address with this command:
+```bash
 kubectl get services -o wide
+```
 
 Go to that address and you should see your blog!
